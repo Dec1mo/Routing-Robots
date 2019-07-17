@@ -2,15 +2,23 @@ import json
 import queue
 from algo import Algo
 import time
+from threading import Thread
+
+def to_json_file(list, file_name):
+	with open (file_name, 'w+') as f:
+		json.dump(list, f)
 
 class Warehouse():
-	#This is a grid-based warehouse, which has size = rows x cols
-	def __init__(self, grid):
+	#This is a grid-based warehouse, which has size = rows x cols, a graph with (rows x cols) nodes
+	def __init__(self, grid, goals):
 		self.grid = grid
-		self.robots = []
-		self.goods = []
+		self.robots = {}
+		self.goods = set()
 		self.requests = queue.Queue()
-		self.requests_hold = 5
+		self.requests_hold = 6
+		self.count = 0
+		self.remaining_requests = []
+		self.goals = goals
 		
 	def load_data(self, data_path):
 		with open (data_path, 'rb') as file:
@@ -20,12 +28,13 @@ class Warehouse():
 	
 	def load_robots(self, robots_path):
 		robots = self.load_data(robots_path)
-		self.robots = [tuple(robots[i]['pos']) for i in range(len(robots))]
-		self.grid.walls += self.robots
+		for robot in robots:
+			self.robots[tuple(robot['pos'])] = None
 			
 	def load_goods(self, goods_path):
 		goods = self.load_data(goods_path)
-		self.goods = [tuple(goods[i]['pos']) for i in range(len(goods))]
+		for good in goods:
+			self.goods.add(tuple(good['pos']))
 		
 	def load_requests(self, requests_path):
 		requests = self.load_data(requests_path)
@@ -34,16 +43,46 @@ class Warehouse():
 			
 	def maintain(self):
 		algo = Algo(self)
-		count = 0
+		while True:
+			if not self.requests.empty() and self.count < self.requests_hold:
+				self.count += 1
+				request = self.requests.get()
+				self.remaining_requests.append(request)
+			else:
+				break
+		print ('requests = ', self.remaining_requests)
+		robots_states, goods_states = algo.BFS(self.remaining_requests)
+		to_json_file(robots_states, r'../results/robots_states.json')
+		to_json_file(goods_states, r'../results/goods_states.json')
+		#These features (multithread support) will be developed in the future
+		'''
 		while True:
 			if not self.requests.empty():
-				if count <= self.requests_hold:
-					count += 1
-					algo.A_star_search()
-					count -= 1
+				if self.count < self.requests_hold: #Need synchronized
+					self.count += 1
+					request = self.requests.get()
+					#Multi-thread o day?
+					bfs_thread = Thread(target = algo.BFS, args = (request))
+					bfs_thread.start() 
+					self.count -= done_requests
 				else:
 					#Sleep somethings
-					time.sleep(0.05)
+					time.sleep(0.1)
 			else:
 				#Sleep somethings
+				break
 				time.sleep(0.05)
+		'''
+		
+				
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+		

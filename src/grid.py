@@ -1,11 +1,8 @@
-
-
 class Grid:
 	def __init__(self, width, height):
 		self.width = width
 		self.height = height
 		self.walls = []
-		self.weights = {}
     
 	def cost(self, from_node, to_node):
 		return self.weights.get(to_node, 1)
@@ -20,7 +17,7 @@ class Grid:
 	def neighbors(self, id):
 		(x, y) = id
 		results = [(x+1, y), (x, y-1), (x-1, y), (x, y+1)]
-		if (x + y) % 2 == 0: results.reverse() # aesthetics
+		if (x + y) % 2 == 0: results.reverse() 
 		results = filter(self.in_bounds, results)
 		results = filter(self.passable, results)
 		return results

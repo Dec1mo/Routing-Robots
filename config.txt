@@ -1,0 +1,15 @@
+1. Folder-Tree must be:
+	./
+		requests/
+			requests.json # Consist of requests (this position to that position) for the warehouse 
+		results/
+			goods_states.json # Not necessary, will genarate later, consist of states of goods
+			robots_states.json # Not necessary, will genarate later, consist of states of robots
+		src/ #source code
+			algo.py # Algorithm - BFS (can be expand in the future)
+			grid.py # Grid-based warehouse - how it set (width, height, walls)
+			main.py
+			warehouse.py # Components of a warehouse - robots, goods, can be multithread in the future
+		warehouse/
+			goods.json # Positions of items in the warehouse
+			robots.json # Positions of robots in the warehouse
