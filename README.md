@@ -1,2 +1,2 @@
 # Routing-Robots
-Routing robots for picking up goods using BFS search algorithm
+Routing robots for goods-picking using BFS search algorithm
